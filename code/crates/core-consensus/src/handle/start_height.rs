@@ -51,8 +51,9 @@ where
         metrics.round.set(round.as_i64());
     }
 
-    let proposer = state.get_proposer(height, round);
-
+    replay_pending_msgs(co, state, metrics, is_restart).await?;
+   
+    let proposer = state.get_proposer(height, round); 
     apply_driver_input(
         co,
         state,
@@ -60,8 +61,6 @@ where
         DriverInput::NewRound(height, round, proposer.clone()),
     )
     .await?;
-
-    replay_pending_msgs(co, state, metrics, is_restart).await?;
 
     Ok(())
 }
